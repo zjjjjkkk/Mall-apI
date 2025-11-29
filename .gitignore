@@ -1,0 +1,13 @@
+# Maven #
+target/
+
+# IDEA #
+.idea/
+*.iml
+**/src/main/resources/application.yml
+
+# Eclipse #
+.settings/
+.classpath
+.project
+

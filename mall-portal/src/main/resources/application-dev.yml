@@ -1,0 +1,52 @@
+server:
+  port: 8085
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: 1234
+    druid:
+      initial-size: 5 #连接池初始化大小
+      min-idle: 10 #最小空闲连接数
+      max-active: 20 #最大连接数
+      web-stat-filter:
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
+      stat-view-servlet: #访问监控网页的登录用户名和密码
+        login-username: druid
+        login-password: druid
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: mall-port
+  redis:
+    host: localhost # Redis服务器地址
+    database: 0 # Redis数据库索引（默认为0）
+    port: 6379 # Redis服务器连接端口
+    password: # Redis服务器连接密码（默认为空）
+    timeout: 300ms # 连接超时时间（毫秒）
+  rabbitmq:
+    host: localhost
+    port: 5672
+    virtual-host: /mall
+    username: mall
+    password: mall
+
+logging:
+  level:
+    root: info
+    com.macro.mall: debug
+
+logstash:
+  host: localhost
+  enableInnerLog: false
+
+alipay:
+  gatewayUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+  appId: 9021000154657645
+  alipayPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsleih8/hhBo/dvs/v+lldOUFs+hpKxLtt9qiLNoQbgvyjuanVu1MLbUv4ZHXniDvlOB1eV/vxWerJta0Q3563tG/V+89MIoFmxkVTMv3x4gQ1ZYIED4qZnoQF4a89S1VumuORGSGqecJ1Z/u+yfdFuuKIOM64fGVTDX4uU298f7HUlXn7Z6a9f7HPA84OSHAjVMRrwLVVsPKwOnH50iuAVsFQaGoX2Dl2NvcqFeo2jbwAzjLIsyC2F50AMolyRdQ85pkypFgn+YeGPgN59nKqBjKuhfD+9w0KFV44Riaa1hAOmFbx+Y0PGQK3O4Q9I4aKm825CI6D1nEEhE8zoMBvQIDAQAB
+  appPrivateKey: MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCE3gRALoW9cnnM8cMHlXsfkd+bDhUm5qcLeJOqSslqs2dBO+FPnpg3t+Io5v7W6pV4+XIhyjqZfyXJBJOFR7yfTr5k7LaBa2nHhDM6Y3BVtQiyyQ3aDtj/JqqHchMgc9aBiqsidDhQ+rOLGk1UQRy8GO0YS+5OO5iKDNrfrnUga5svvWKk1+QrhP/9JEpSQee/hwpTGIOZNHuwf8Q+MLGwcCEZLCSGbKgTVOPKaKEugUbevYWywvkqI+qvWu/mxk5T6j30rIPMAiLLEyzOhtaiCU9HJ0tS3h1vTP87JoXhcBGZm7GycuK7Xd0L4DEhCnrB4p2BzqahpMsjlF/uSnr1AgMBAAECggEAYI2aVy23oKE04/r4OGWnUJzH+ry0IE3TLGHWJRUt42015tDl/d8JTMxC/GhI3tMgBgZ3qxhzlyIvyjGaJmuoJbiqYVsnkUsGVqe6Nn8WniHtjUbP2xuZE2n82GrMfXPQeNjVXjdIyYg1uytE8KpUgFg4y8Q6C/4A7qlC0PPNR93+GofX8xqwca3JOrKVRe6h2o4qnzWMqOeq09zd+ZA9NMrl4tNsatLvGqi/mm54srSMKYSkWiJ4vv6do+Z9l1+fuRV81luWkAATT9VMowl+o+Frh5tgtwlHscHJyGe+RpkomoawQ9/4z6yZBG71crF8Dzzg8qX9C4X5MD4BG50cIQKBgQDEO7oxABfN2Z3K9Z4xmIJuQOIuCkw1txRPNeOAjD8vIRG/qio29Cd0IbBveIsFhTgXDiCFFrwjMHgSJMI3xoQzAeDYwZfSUPhCFyvZgBAgGJlLZarTD1XAFb3hs6GRPeHTwLe4RwluK3vzSaqTUMmU858GXr8SbxaA1Ye4JVjUeQKBgQCtVaZ0yBx28eHm9f2Rm8qwTPAvGvu0X0s3JsinnsCYg0CLO9EN4ZIWLBKwsGrSld5u+CI9yCt652oqrHMdve/buf0xmOMjeNeOwEC5sEXBm6d7IH8Nt5onLrWvkLP1jmVglDP4lrg84YPwG1Jepl6LP8JQD8DF2h2OF4xGSg7jXQKBgEStAoSTm8EXH/of67U/wqYDXyTtxa4m3Jy8J1qdup8r26JQU2XYHNav06evcDgGX5LyBr+NLVrDY8I1yyLp/uo7Bg3V8uRQIhI/OcFs6DfTZBLXCenDvCb1dPbAfxLtrVMGZ0W+1rYP0dlbNq9H3sSaXlVEY2p4JlAAavcvWt9BAoGAaJhlsNTMcG43rkJEeCg1oDtdOF+lAcv7PFWYAaYHfEC/owU+eozitaR0xtA+NcMgDYCIURXIPwsEAqo7cPgblFDgW5xxfAdAtDCJHkQjY9hEsUUDxkhDql9CXaYJIiWCQUxNLDXvCTXggvRJuTnVlVutKtjGr92Vthe5mvS3lTUCgYBGdonLuzM+UPiqs7s9nvFOsgBiII1mJNnrb3JMKNgRMU3AqLCe1LJCsGD+5gIz9ZtBxJcajfLerYj6RLAaAMxIy7xNsZetRb4TnZiBDpvEWJ2G2sbn81MB/9DPLYl3Hz/8acbFC201LmtVeuyUzz+0DJuNy+MPP2bGaAkP7Pk5EA==
+  returnUrl: http://localhost:8060/#/pages/money/paySuccess
+  notifyUrl: http://b9638cd7.natappfree.cc/alipay/notify
+
