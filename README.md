@@ -93,9 +93,111 @@ mall
 - 内容管理：[功能结构图-内容.jpg](document/resource/mind_content.jpg)
 - 用户管理：[功能结构图-用户.jpg](document/resource/mind_member.jpg)
 
+**模块详细结构：**
+
+```lua
+mall-admin
+├── src/main/java/com/macro/mall
+│   ├── bo/                    # 业务对象
+│   │   └── AdminUserDetails.java   # 管理员用户详情
+│   ├── config/                # 配置类
+│   │   ├── GlobalCorsConfig.java    # 全局CORS配置
+│   │   ├── MallSecurityConfig.java  # Spring Security配置
+│   │   ├── MyBatisConfig.java       # MyBatis配置
+│   │   ├── OssConfig.java           # OSS配置
+│   │   └── SwaggerConfig.java       # Swagger配置
+│   ├── controller/            # 控制器
+│   │   ├── CmsPrefrenceAreaController.java      # 商品优选管理
+│   │   ├── CmsSubjectController.java            # 商品专题管理
+│   │   ├── OmsOrderController.java              # 订单管理
+│   │   ├── PmsProductController.java            # 商品管理
+│   │   ├── SmsCouponController.java             # 优惠券管理
+│   │   ├── UmsAdminController.java              # 管理员管理
+│   │   └── UmsRoleController.java               # 角色权限管理
+│   ├── dao/                   # 自定义DAO
+│   │   ├── PmsProductDao.java                   # 商品自定义DAO
+│   │   ├── OmsOrderDao.java                     # 订单自定义DAO
+│   │   └── UmsAdminRoleRelationDao.java         # 管理员角色关系DAO
+│   ├── dto/                   # 数据传输对象
+│   │   ├── PmsProductParam.java                 # 商品参数
+│   │   ├── OmsOrderQueryParam.java              # 订单查询参数
+│   │   └── UmsAdminParam.java                   # 管理员参数
+│   ├── service/               # 业务服务
+│   │   ├── impl/              # 服务实现
+│   │   │   ├── PmsProductServiceImpl.java       # 商品服务实现
+│   │   │   ├── OmsOrderServiceImpl.java         # 订单服务实现
+│   │   │   └── UmsAdminServiceImpl.java         # 管理员服务实现
+│   │   ├── PmsProductService.java               # 商品服务
+│   │   ├── OmsOrderService.java                 # 订单服务
+│   │   └── UmsAdminService.java                 # 管理员服务
+│   └── validator/             # 自定义验证器
+│       ├── FlagValidator.java                   # 标志位验证器
+│       └── FlagValidatorClass.java              # 标志位验证器类
+└── src/main/resources
+    ├── application.yml        # 主配置文件
+    ├── application-dev.yml    # 开发环境配置
+    ├── application-prod.yml   # 生产环境配置
+    └── dao/                   # DAO映射文件
+        ├── PmsProductDao.xml                    # 商品DAO映射
+        ├── OmsOrderDao.xml                      # 订单DAO映射
+        └── UmsAdminRoleRelationDao.xml          # 管理员角色关系DAO映射
+```
+
 ##### 前台商城系统 `mall-portal`
 
 [功能结构图-前台.jpg](document/resource/mind_portal.jpg)
+
+**模块详细结构：**
+
+```lua
+mall-portal
+├── src/main/java/com/macro/mall/portal
+│   ├── component/             # 组件
+│   │   ├── CancelOrderReceiver.java     # 取消订单消息接收者
+│   │   ├── CancelOrderSender.java       # 取消订单消息发送者
+│   │   └── OrderTimeOutCancelTask.java  # 订单超时取消任务
+│   ├── config/                # 配置类
+│   │   ├── MallSecurityConfig.java      # Spring Security配置
+│   │   ├── RabbitMqConfig.java           # RabbitMQ配置
+│   │   ├── SpringTaskConfig.java         # Spring Task配置
+│   │   └── SwaggerConfig.java            # Swagger配置
+│   ├── controller/            # 控制器
+│   │   ├── HomeController.java           # 首页管理
+│   │   ├── OmsCartItemController.java    # 购物车管理
+│   │   ├── OmsPortalOrderController.java # 订单管理
+│   │   ├── PmsPortalProductController.java # 商品管理
+│   │   └── UmsMemberController.java      # 会员管理
+│   ├── dao/                   # 自定义DAO
+│   │   ├── HomeDao.java                  # 首页自定义DAO
+│   │   ├── PortalOrderDao.java           # 订单自定义DAO
+│   │   └── PortalProductDao.java         # 商品自定义DAO
+│   ├── domain/                # 领域模型
+│   │   ├── CartProduct.java              # 购物车商品
+│   │   ├── ConfirmOrderResult.java       # 确认订单结果
+│   │   ├── HomeContentResult.java        # 首页内容结果
+│   │   └── OrderParam.java               # 订单参数
+│   ├── repository/            # MongoDB Repository
+│   │   ├── MemberProductCollectionRepository.java # 商品收藏Repository
+│   │   └── MemberReadHistoryRepository.java       # 商品浏览历史Repository
+│   ├── service/               # 业务服务
+│   │   ├── impl/              # 服务实现
+│   │   │   ├── HomeServiceImpl.java     # 首页服务实现
+│   │   │   ├── OmsPortalOrderServiceImpl.java # 订单服务实现
+│   │   │   └── UmsMemberServiceImpl.java # 会员服务实现
+│   │   ├── HomeService.java              # 首页服务
+│   │   ├── OmsPortalOrderService.java    # 订单服务
+│   │   └── UmsMemberService.java         # 会员服务
+│   └── util/                  # 工具类
+│       └── DateUtil.java                 # 日期工具
+└── src/main/resources
+    ├── application.yml        # 主配置文件
+    ├── application-dev.yml    # 开发环境配置
+    ├── application-prod.yml   # 生产环境配置
+    └── dao/                   # DAO映射文件
+        ├── HomeDao.xml                   # 首页DAO映射
+        ├── PortalOrderDao.xml            # 订单DAO映射
+        └── PortalProductDao.xml          # 商品DAO映射
+```
 
 #### 开发进度
 
