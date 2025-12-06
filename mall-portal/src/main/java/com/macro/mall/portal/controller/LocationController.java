@@ -29,7 +29,7 @@ public class LocationController {
     public CommonResult<Map<String, Object>> reverse(
             @RequestParam double lat,
             @RequestParam double lng) throws IOException {
-
+        // 1. 构建高德API请求URL
         HttpUrl url = HttpUrl.parse("https://restapi.amap.com/v3/geocode/regeo")
                 .newBuilder()
                 .addQueryParameter("key", GAODE_KEY)
@@ -38,17 +38,19 @@ public class LocationController {
                 .addQueryParameter("radius", "1000")
                 .addQueryParameter("output", "json")
                 .build();
-
+        // 2. 发送GET请求到高德API
         Request request = new Request.Builder().url(url).get().build();
         try (Response response = CLIENT.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 return CommonResult.failed("高德返回错误：" + response.code());
             }
+            // 3. 解析高德返回的JSON数据
             String body = response.body().string();
             JSONObject json = JSONObject.parseObject(body);
             if (!"1".equals(json.getString("status"))) {
                 return CommonResult.failed("高德服务失败：" + json.getString("info"));
             }
+            // 4. 提取核心地址字段
             JSONObject comp = json.getJSONObject("regeocode").getJSONObject("addressComponent");
             Map<String, Object> result = new HashMap<>();
             result.put("province", comp.getString("province"));

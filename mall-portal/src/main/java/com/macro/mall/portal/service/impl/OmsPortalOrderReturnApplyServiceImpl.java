@@ -2,13 +2,16 @@ package com.macro.mall.portal.service.impl;
 
 import com.macro.mall.mapper.OmsOrderReturnApplyMapper;
 import com.macro.mall.model.OmsOrderReturnApply;
+import com.macro.mall.model.OmsOrderReturnApplyExample;
 import com.macro.mall.portal.domain.OmsOrderReturnApplyParam;
 import com.macro.mall.portal.service.OmsPortalOrderReturnApplyService;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 订单退货管理Service实现类
@@ -18,12 +21,37 @@ import java.util.Date;
 public class OmsPortalOrderReturnApplyServiceImpl implements OmsPortalOrderReturnApplyService {
     @Autowired
     private OmsOrderReturnApplyMapper returnApplyMapper;
+
     @Override
-    public int create(OmsOrderReturnApplyParam returnApply) {
-        OmsOrderReturnApply realApply = new OmsOrderReturnApply();
-        BeanUtils.copyProperties(returnApply,realApply);
-        realApply.setCreateTime(new Date());
-        realApply.setStatus(0);
-        return returnApplyMapper.insert(realApply);
+    public int create(OmsOrderReturnApplyParam returnApplyParam, Long memberId, String username) {
+        OmsOrderReturnApply returnApply = new OmsOrderReturnApply();
+        BeanUtils.copyProperties(returnApplyParam, returnApply);
+        returnApply.setMemberUsername(username);
+        returnApply.setCreateTime(new Date());
+        returnApply.setStatus(0); // 0: 待处理
+        return returnApplyMapper.insert(returnApply);
+    }
+
+    @Override
+    public List<OmsOrderReturnApply> list(Long memberId, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        OmsOrderReturnApplyExample example = new OmsOrderReturnApplyExample();
+        example.setOrderByClause("create_time desc");
+        return returnApplyMapper.selectByExample(example);
+    }
+
+    @Override
+    public OmsOrderReturnApply detail(Long id, Long memberId) {
+        return returnApplyMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public int cancel(Long id, Long memberId) {
+        OmsOrderReturnApply returnApply = new OmsOrderReturnApply();
+        returnApply.setId(id);
+        returnApply.setStatus(4); // 4: 已取消
+        OmsOrderReturnApplyExample example = new OmsOrderReturnApplyExample();
+        example.createCriteria().andIdEqualTo(id).andStatusEqualTo(0);
+        return returnApplyMapper.updateByExampleSelective(returnApply, example);
     }
 }

@@ -4,7 +4,10 @@ import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.dto.*;
 import com.macro.mall.model.OmsOrder;
+import com.macro.mall.model.OmsRefundOrder;
+import com.macro.mall.model.OmsRefundOrderExample;
 import com.macro.mall.service.OmsOrderService;
+import com.macro.mall.mapper.OmsRefundOrderMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +28,9 @@ import java.util.List;
 public class OmsOrderController {
     @Autowired
     private OmsOrderService orderService;
+    // 新增注入退款订单Mapper
+    @Autowired
+    private OmsRefundOrderMapper refundOrderMapper;
 
     @ApiOperation("查询订单")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -110,5 +116,19 @@ public class OmsOrderController {
             return CommonResult.success(count);
         }
         return CommonResult.failed();
+    }
+
+    // ======================== 新增：按订单ID查询退款记录 ========================
+    @ApiOperation("按订单ID查询退款记录")
+    @RequestMapping(value = "/refund/{orderId}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<OmsRefundOrder>> getRefundByOrderId(@PathVariable Long orderId) {
+        // 构造查询条件：查询该订单下的所有退款记录
+        OmsRefundOrderExample example = new OmsRefundOrderExample();
+        example.createCriteria().andOrderIdEqualTo(orderId);
+        // 按创建时间倒序排列
+        example.setOrderByClause("create_time desc");
+        List<OmsRefundOrder> refundOrderList = refundOrderMapper.selectByExample(example);
+        return CommonResult.success(refundOrderList);
     }
 }

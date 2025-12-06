@@ -107,6 +107,57 @@ public class CommonResult<T> {
         return new CommonResult<T>(ResultCode.FORBIDDEN.getCode(), ResultCode.FORBIDDEN.getMessage(), data);
     }
 
+    // ======================== 新增退款专用返回方法 ========================
+    /**
+     * 退款申请提交成功
+     */
+    public static <T> CommonResult<T> refundApplySuccess() {
+        return new CommonResult<T>(ResultCode.SUCCESS.getCode(), "退款申请提交成功", null);
+    }
+
+    /**
+     * 退款申请提交成功（带数据）
+     */
+    public static <T> CommonResult<T> refundApplySuccess(T data) {
+        return new CommonResult<T>(ResultCode.SUCCESS.getCode(), "退款申请提交成功", data);
+    }
+
+    /**
+     * 退款申请提交失败
+     */
+    public static <T> CommonResult<T> refundApplyFailed(String message) {
+        return new CommonResult<T>(ResultCode.FAILED.getCode(), message, null);
+    }
+
+    /**
+     * 退款审核成功
+     */
+    public static <T> CommonResult<T> refundAuditSuccess() {
+        return new CommonResult<T>(ResultCode.SUCCESS.getCode(), "退款审核成功", null);
+    }
+
+    /**
+     * 退款审核失败
+     */
+    public static <T> CommonResult<T> refundAuditFailed(String message) {
+        return new CommonResult<T>(ResultCode.FAILED.getCode(), message, null);
+    }
+
+    /**
+     * 退款操作成功（如退款到账）
+     */
+    public static <T> CommonResult<T> refundSuccess(T data) {
+        return new CommonResult<T>(ResultCode.SUCCESS.getCode(), "退款成功", data);
+    }
+
+    /**
+     * 退款操作失败（如支付渠道退款失败）
+     */
+    public static <T> CommonResult<T> refundFailed(String message) {
+        return new CommonResult<T>(ResultCode.FAILED.getCode(), message, null);
+    }
+
+    // ======================== 原有getter/setter ========================
     public long getCode() {
         return code;
     }
