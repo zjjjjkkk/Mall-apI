@@ -61,4 +61,9 @@ public interface UmsMemberService {
      * 刷新token
      */
     String refreshToken(String token);
+
+    /**
+     * 更新个人资料（用户名、性别、电话、个性签名）
+     */
+    int updateProfile(UmsMember profile);
 }

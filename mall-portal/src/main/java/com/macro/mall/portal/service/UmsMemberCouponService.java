@@ -7,6 +7,7 @@ import com.macro.mall.portal.domain.SmsCouponHistoryDetail;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户优惠券管理Service
@@ -38,4 +39,12 @@ public interface UmsMemberCouponService {
      * 获取用户优惠券列表
      */
     List<SmsCoupon> list(Integer useStatus);
+
+    /**
+     * 使用积分兑换优惠券
+     * @param couponId 优惠券ID
+     * @return 兑换结果信息
+     */
+    @Transactional
+    Map<String, Object> exchangeWithIntegration(Long couponId);
 }

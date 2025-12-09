@@ -1,5 +1,11 @@
 server:
   port: 8085
+  tomcat:
+    connection-timeout: 600000 # 连接超时时间 10分钟（毫秒）
+    max-connections: 10000 # 最大连接数
+    threads:
+      max: 200 # 最大线程数
+      min-spare: 10 # 最小空闲线程数
 
 spring:
   datasource:

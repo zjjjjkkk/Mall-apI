@@ -178,6 +178,36 @@ public class UmsMemberServiceImpl implements UmsMemberService {
     }
 
     @Override
+    public int updateProfile(UmsMember profile) {
+        UmsMember current = getCurrentMember();
+        if (current == null) {
+            Asserts.fail("用户未登录");
+        }
+        UmsMember update = new UmsMember();
+        update.setId(current.getId());
+        if (StrUtil.isNotBlank(profile.getUsername())) {
+            update.setUsername(profile.getUsername());
+            // 同步昵称，便于前端展示
+            update.setNickname(profile.getUsername());
+        }
+        if (profile.getGender() != null) {
+            update.setGender(profile.getGender());
+        }
+        if (StrUtil.isNotBlank(profile.getPhone())) {
+            update.setPhone(profile.getPhone());
+        }
+        if (StrUtil.isNotBlank(profile.getPersonalizedSignature())) {
+            update.setPersonalizedSignature(profile.getPersonalizedSignature());
+        }
+        if (StrUtil.isNotBlank(profile.getIcon())) {
+            update.setIcon(profile.getIcon());
+        }
+        int count = memberMapper.updateByPrimaryKeySelective(update);
+        memberCacheService.delMember(current.getId());
+        return count;
+    }
+
+    @Override
     public String refreshToken(String token) {
         return jwtTokenUtil.refreshHeadToken(token);
     }

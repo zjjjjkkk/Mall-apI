@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 会员优惠券管理Controller
@@ -79,5 +80,13 @@ public class UmsMemberCouponController {
     public CommonResult<List<SmsCoupon>> listByProduct(@PathVariable Long productId) {
         List<SmsCoupon> couponHistoryList = memberCouponService.listByProduct(productId);
         return CommonResult.success(couponHistoryList);
+    }
+
+    @ApiOperation("使用积分兑换优惠券")
+    @RequestMapping(value = "/exchange/{couponId}", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult exchangeWithIntegration(@PathVariable Long couponId) {
+        Map<String, Object> result = memberCouponService.exchangeWithIntegration(couponId);
+        return CommonResult.success(result, (String) result.get("message"));
     }
 }

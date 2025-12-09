@@ -33,6 +33,15 @@ public class PmsBrand implements Serializable {
     @ApiModelProperty(value = "品牌故事")
     private String brandStory;
 
+    @ApiModelProperty(value = "商家地址")
+    private String address;
+
+    @ApiModelProperty(value = "经度")
+    private java.math.BigDecimal longitude;
+
+    @ApiModelProperty(value = "纬度")
+    private java.math.BigDecimal latitude;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -123,6 +132,30 @@ public class PmsBrand implements Serializable {
         this.brandStory = brandStory;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public java.math.BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(java.math.BigDecimal longitude) {
+        this.longitude = longitude;
+    }
+
+    public java.math.BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(java.math.BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -140,6 +173,9 @@ public class PmsBrand implements Serializable {
         sb.append(", logo=").append(logo);
         sb.append(", bigPic=").append(bigPic);
         sb.append(", brandStory=").append(brandStory);
+        sb.append(", address=").append(address);
+        sb.append(", longitude=").append(longitude);
+        sb.append(", latitude=").append(latitude);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

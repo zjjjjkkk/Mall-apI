@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,10 @@ public class UmsMemberCouponServiceImpl implements UmsMemberCouponService {
     private SmsCouponProductCategoryRelationMapper couponProductCategoryRelationMapper;
     @Autowired
     private PmsProductMapper productMapper;
+    @Autowired
+    private UmsMemberMapper memberMapper;
+    @Autowired
+    private UmsIntegrationChangeHistoryMapper integrationChangeHistoryMapper;
     @Override
     public void add(Long couponId) {
         UmsMember currentMember = memberService.getCurrentMember();
@@ -239,6 +245,87 @@ public class UmsMemberCouponServiceImpl implements UmsMemberCouponService {
             }
         }
         return total;
+    }
+
+    @Override
+    public Map<String, Object> exchangeWithIntegration(Long couponId) {
+        UmsMember currentMember = memberService.getCurrentMember();
+        
+        // 获取优惠券信息
+        SmsCoupon coupon = couponMapper.selectByPrimaryKey(couponId);
+        if (coupon == null) {
+            Asserts.fail("优惠券不存在");
+        }
+        
+        // 计算所需积分（规则：优惠券金额 * 10，例如10元优惠券需要100积分）
+        // 可以根据实际需求调整兑换规则
+        int requiredIntegration = coupon.getAmount().multiply(new BigDecimal("10")).intValue();
+        
+        // 检查用户积分是否足够
+        Integer currentIntegration = currentMember.getIntegration() == null ? 0 : currentMember.getIntegration();
+        if (currentIntegration < requiredIntegration) {
+            Asserts.fail("积分不足，需要" + requiredIntegration + "积分，当前只有" + currentIntegration + "积分");
+        }
+        
+        // 检查优惠券数量
+        if (coupon.getCount() <= 0) {
+            Asserts.fail("优惠券已经领完了");
+        }
+        
+        // 检查优惠券是否在有效期内
+        Date now = new Date();
+        if (now.before(coupon.getEnableTime())) {
+            Asserts.fail("优惠券还没到领取时间");
+        }
+        
+        // 检查用户是否已领取过该优惠券
+        SmsCouponHistoryExample couponHistoryExample = new SmsCouponHistoryExample();
+        couponHistoryExample.createCriteria().andCouponIdEqualTo(couponId).andMemberIdEqualTo(currentMember.getId());
+        long count = couponHistoryMapper.countByExample(couponHistoryExample);
+        if (count >= coupon.getPerLimit()) {
+            Asserts.fail("您已经领取过该优惠券");
+        }
+        
+        // 扣除积分
+        currentMember.setIntegration(currentIntegration - requiredIntegration);
+        memberMapper.updateByPrimaryKeySelective(currentMember);
+        
+        // 记录积分变化历史
+        UmsIntegrationChangeHistory history = new UmsIntegrationChangeHistory();
+        history.setMemberId(currentMember.getId());
+        history.setCreateTime(new Date());
+        history.setChangeType(1); // 1-减少
+        history.setChangeCount(requiredIntegration);
+        history.setOperateMan("系统");
+        history.setOperateNote("积分兑换优惠券：" + coupon.getName());
+        history.setSourceType(3); // 3-积分兑换
+        integrationChangeHistoryMapper.insertSelective(history);
+        
+        // 生成领取优惠券历史
+        SmsCouponHistory couponHistory = new SmsCouponHistory();
+        couponHistory.setCouponId(couponId);
+        couponHistory.setCouponCode(generateCouponCode(currentMember.getId()));
+        couponHistory.setCreateTime(now);
+        couponHistory.setMemberId(currentMember.getId());
+        couponHistory.setMemberNickname(currentMember.getNickname());
+        couponHistory.setGetType(2); // 2-积分兑换
+        couponHistory.setUseStatus(0); // 未使用
+        couponHistoryMapper.insert(couponHistory);
+        
+        // 修改优惠券表的数量、领取数量
+        coupon.setCount(coupon.getCount() - 1);
+        coupon.setReceiveCount(coupon.getReceiveCount() == null ? 1 : coupon.getReceiveCount() + 1);
+        couponMapper.updateByPrimaryKey(coupon);
+        
+        // 返回结果
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("couponName", coupon.getName());
+        result.put("requiredIntegration", requiredIntegration);
+        result.put("remainingIntegration", currentMember.getIntegration());
+        result.put("message", "兑换成功，已扣除" + requiredIntegration + "积分");
+        
+        return result;
     }
 
 }

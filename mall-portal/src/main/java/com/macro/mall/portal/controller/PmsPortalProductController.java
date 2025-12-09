@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -29,6 +30,9 @@ public class PmsPortalProductController {
     @Autowired
     private PmsPortalProductService portalProductService;
 
+    @Autowired
+    private com.macro.mall.portal.service.UmsUserBehaviorService userBehaviorService;
+
     @ApiOperation(value = "综合搜索、筛选、排序")
     @ApiImplicitParam(name = "sort", value = "排序字段:0->按相关度；1->按新品；2->按销量；3->价格从低到高；4->价格从高到低",
             defaultValue = "0", allowableValues = "0,1,2,3,4", paramType = "query", dataType = "integer")
@@ -39,8 +43,16 @@ public class PmsPortalProductController {
                                                        @RequestParam(required = false) Long productCategoryId,
                                                        @RequestParam(required = false, defaultValue = "0") Integer pageNum,
                                                        @RequestParam(required = false, defaultValue = "5") Integer pageSize,
-                                                       @RequestParam(required = false, defaultValue = "0") Integer sort) {
+                                                       @RequestParam(required = false, defaultValue = "0") Integer sort,
+                                                       HttpServletRequest request) {
         List<PmsProduct> productList = portalProductService.search(keyword, brandId, productCategoryId, pageNum, pageSize, sort);
+        
+        // 记录搜索行为
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            userBehaviorService.recordBehavior("SEARCH", "PRODUCT", null, keyword, 
+                "{\"brandId\":" + brandId + ",\"categoryId\":" + productCategoryId + ",\"sort\":" + sort + "}", request);
+        }
+        
         return CommonResult.success(CommonPage.restPage(productList));
     }
 
@@ -55,8 +67,15 @@ public class PmsPortalProductController {
     @ApiOperation("获取前台商品详情")
     @RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<PmsPortalProductDetail> detail(@PathVariable Long id) {
+    public CommonResult<PmsPortalProductDetail> detail(@PathVariable Long id, HttpServletRequest request) {
         PmsPortalProductDetail productDetail = portalProductService.detail(id);
+        
+        // 记录浏览行为
+        if (productDetail != null && productDetail.getProduct() != null) {
+            userBehaviorService.recordBehavior("VIEW", "PRODUCT", id, 
+                productDetail.getProduct().getName(), null, request);
+        }
+        
         return CommonResult.success(productDetail);
     }
 }
